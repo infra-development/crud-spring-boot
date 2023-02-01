@@ -1,7 +1,10 @@
 package com.guavus.crudspringboot.service;
 
+import com.guavus.crudspringboot.controllers.UserController;
 import com.guavus.crudspringboot.model.User;
 import com.guavus.crudspringboot.repository.UserRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -12,6 +15,8 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+
+    private static final Logger logger = LogManager.getLogger(UserServiceImpl.class);
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -56,9 +61,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean emailExists(String email) {
-        System.out.println("Email : "+email);
+        logger.debug("Email : "+email);
         User existingUser = userRepository.findByEmail(email);
-        System.out.println("existing user : "+existingUser);
+        logger.debug("Existing User : "+existingUser);
         return existingUser != null;
     }
 }

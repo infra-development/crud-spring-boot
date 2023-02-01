@@ -2,6 +2,8 @@ package com.guavus.crudspringboot.controllers;
 
 import com.guavus.crudspringboot.model.User;
 import com.guavus.crudspringboot.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +19,8 @@ public class UserController {
     private static final String USER_CREATE_FORM = "users/newuser";
     private static final String USER_UPDATE_FORM = "users/update";
     private static final String REDIRECT_TO_ROOT = "redirect:/";
+
+    private static final Logger logger = LogManager.getLogger(UserController.class);
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -40,10 +44,13 @@ public class UserController {
         if (result.hasErrors()) {
             return USER_CREATE_FORM;
         }
+        logger.debug("Validating unique email address");
         if(userService.emailExists(user.getEmail())) {
+            logger.debug("Email already exists");
             model.addAttribute("errorMessage", "We couldn't process with this email");
             return USER_CREATE_FORM;
         }
+        logger.debug("Email doesn't exist");
         userService.save(user);
         return REDIRECT_TO_ROOT;
     }
