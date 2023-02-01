@@ -6,18 +6,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Controller
 public class UserController {
     private final UserService userService;
-    private static final String VIEWS_USER_CREATE_OR_UPDATE_FORM = "users/add-user";
+    private static final String USER_CREATE_FORM = "users/newuser";
+    private static final String USER_UPDATE_FORM = "users/update";
+    private static final String REDIRECT_TO_ROOT = "redirect:/";
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -33,26 +32,33 @@ public class UserController {
     public String addNewUser(Model model) {
         User user = new User();
         model.addAttribute("user", user);
-        return "users/newuser";
+        return USER_CREATE_FORM;
     }
 
     @PostMapping("/save")
-    public String saveEmployee(@ModelAttribute("user") User user) {
+    public String saveUser(@Valid User user, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return USER_CREATE_FORM;
+        }
+        if(userService.emailExists(user.getEmail())) {
+            model.addAttribute("errorMessage", "We couldn't process with this email");
+            return USER_CREATE_FORM;
+        }
         userService.save(user);
-        return "redirect:/";
+        return REDIRECT_TO_ROOT;
     }
 
     @GetMapping("/showFormForUpdate/{id}")
     public String updateForm(@PathVariable(value = "id") long id, Model model) {
         User user = userService.findById(id);
         model.addAttribute("user", user);
-        return "users/update";
+        return USER_UPDATE_FORM;
     }
 
     @GetMapping("/deleteUser/{id}")
     public String deleteThroughId(@PathVariable(value = "id") long id) {
         userService.deleteById(id);
-        return "redirect:/";
+        return REDIRECT_TO_ROOT;
 
     }
 

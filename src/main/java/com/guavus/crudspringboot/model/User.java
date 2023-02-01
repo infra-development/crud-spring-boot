@@ -8,6 +8,8 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @Setter
 @Getter
@@ -17,9 +19,11 @@ import javax.persistence.Table;
 public class User extends BaseEntity {
 
     @Column(name = "name")
+    @NotBlank(message = "Name can not be empty")
     private String name;
 
     @Column(name = "email")
+    @Email(message = "Enter valid email address")
     private String email;
 
     @Builder

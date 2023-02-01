@@ -53,4 +53,12 @@ public class UserServiceImpl implements UserService {
     public List<User> findAllByNameLike(String name) {
         return userRepository.findAllByNameLike(name);
     }
+
+    @Override
+    public Boolean emailExists(String email) {
+        System.out.println("Email : "+email);
+        User existingUser = userRepository.findByEmail(email);
+        System.out.println("existing user : "+existingUser);
+        return existingUser != null;
+    }
 }
